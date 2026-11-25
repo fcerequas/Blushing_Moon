@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}My Profile — Blushing Moon{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card bg-body-tertiary border-secondary p-4 shadow">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h3 class="mb-1">Member Profile</h3>
+                    <span class="badge bg-secondary">{{ user.get_role_display }}</span>
+                </div>
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}"
+                         alt="{{ user.first_name|default:user.username }}'s profile picture"
+                         class="rounded border border-secondary object-fit-cover shadow-sm"
+                         style="width: 110px; height: 110px;">
+                {% endif %}
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-danger">Save Profile Changes</button>
+            </form>
+        </div>
+
+        {% if not user.is_superuser %}
+        <div class="card bg-body-tertiary border-danger p-4 shadow mt-4">
+            <h5 class="text-danger mb-2">Delete Membership Account</h5>
+            <p class="text-secondary small mb-3">
+                Permanently remove your profile, RSVPs, forum posts, and direct messages from Blushing Moon. This action cannot be undone.
+            </p>
+            <form method="post" action="{% url 'delete_own_account' %}" onsubmit="return confirm('Are you sure you want to permanently delete your account? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger btn-sm">Permanently Delete My Account</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

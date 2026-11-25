@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Blushing Moon{% endblock %}
+
+{% block extra_head %}
+<style>
+    .splash-hero {
+        min-height: 100vh;
+        width: 100%;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)),
+                          url("{% static 'BMclub/images/blushing_moon_splash.jpeg' %}");
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+    }
+</style>
+{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block body_layout %}
+<div class="splash-hero d-flex flex-column justify-content-end align-items-center pb-5 px-3">
+    {% if messages %}
+        <div class="container mb-4" style="max-width: 600px;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center mb-4">
+        <a href="{% url 'login' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold shadow">
+            Member Login
+        </a>
+        <a href="{% url 'apply_options' %}" class="btn btn-danger btn-lg px-5 py-3 fw-bold shadow">
+            Apply for Membership
+        </a>
+    </div>
+</div>
+{% endblock %}

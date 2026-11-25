@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Club Forums — Blushing Moon{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Discussion Forums</h2>
+
+<div class="list-group">
+    {% for topic in topics %}
+        <a href="{% url 'forum_topic_detail' topic_pk=topic.pk %}" class="list-group-item list-group-item-action bg-body-tertiary border-secondary py-3">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1 text-light">{{ topic.title }}</h5>
+                <small class="text-secondary">{{ topic.created_at|date:"M j, Y" }}</small>
+            </div>
+            <p class="mb-1 text-secondary small">{{ topic.description }}</p>
+        </a>
+    {% empty %}
+        <div class="alert alert-secondary">No forum topics have been created by the administrators yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

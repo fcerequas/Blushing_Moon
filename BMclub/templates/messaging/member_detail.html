@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ member.first_name|default:member.username }} — Blushing Moon{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="mb-3">
+            <a href="{% url 'member_directory' %}" class="btn btn-outline-secondary btn-sm">&larr; Back to Directory</a>
+        </div>
+
+        <div class="card bg-body-tertiary border-secondary p-4 shadow">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                <div>
+                    <h2 class="mb-1">{{ member.first_name|default:member.username }}</h2>
+                    <div class="text-secondary small mb-2">@{{ member.username }}</div>
+                    <span class="badge bg-danger">{{ member.get_role_display }}</span>
+                </div>
+
+                {% if member.profile_picture %}
+                    <a href="{{ member.profile_picture.url }}" target="_blank" rel="noopener">
+                        <img src="{{ member.profile_picture.url }}"
+                             alt="{{ member.first_name|default:member.username }}'s profile picture"
+                             class="rounded border border-secondary object-fit-cover shadow"
+                             style="width: 140px; height: 140px;">
+                    </a>
+                {% endif %}
+            </div>
+
+            <hr class="border-secondary">
+
+            <div class="mb-4">
+                <h6 class="text-secondary text-uppercase small fw-bold">About</h6>
+                <p class="mb-0">{{ member.bio|default:"No profile notes provided yet."|linebreaksbr }}</p>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 align-items-center pt-3 border-top border-secondary">
+                {% if not consent %}
+                    <a href="{% url 'request_consent' recipient_pk=member.pk %}" class="btn btn-outline-light btn-sm">
+                        Request DM Consent
+                    </a>
+                {% elif consent.status == 'PENDING' %}
+                    {% if consent.is_requester %}
+                        <span class="badge bg-warning text-dark">DM Consent Pending</span>
+                    {% else %}
+                        <a href="{% url 'update_consent' consent_pk=consent.id action='accept' %}" class="btn btn-sm btn-success">Accept DM Request</a>
+                        <a href="{% url 'update_consent' consent_pk=consent.id action='revoke' %}" class="btn btn-sm btn-outline-danger">Decline</a>
+                    {% endif %}
+                {% elif consent.status == 'ACCEPTED' %}
+                    <a href="{% url 'conversation' other_member_pk=member.pk %}" class="btn btn-sm btn-primary">Open Direct Messages</a>
+                    <a href="{% url 'update_consent' consent_pk=consent.id action='revoke' %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Revoke messaging consent?');">Revoke Consent</a>
+                {% elif consent.status == 'REVOKED' %}
+                    <span class="badge bg-danger">DM Consent Revoked</span>
+                    <a href="{% url 'request_consent' recipient_pk=member.pk %}" class="btn btn-sm btn-outline-secondary">Re-request Consent</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

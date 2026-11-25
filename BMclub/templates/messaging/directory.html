@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Member Directory — Blushing Moon{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Member Directory & Messaging Consent</h2>
+
+<div class="list-group">
+    {% for item in member_data %}
+        <div class="list-group-item bg-body-tertiary border-secondary d-flex justify-content-between align-items-center py-3">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{% url 'member_detail' member_pk=item.member.pk %}" class="text-decoration-none flex-shrink-0">
+                    {% if item.member.profile_picture %}
+                        <img src="{{ item.member.profile_picture.url }}"
+                             alt="{{ item.member.first_name|default:item.member.username }}"
+                             class="rounded-circle border border-secondary object-fit-cover"
+                             style="width: 48px; height: 48px;">
+                    {% else %}
+                        <div class="rounded-circle bg-secondary text-light d-flex align-items-center justify-content-center fw-bold border border-secondary"
+                             style="width: 48px; height: 48px; font-size: 1.1rem;">
+                            {{ item.member.first_name|default:item.member.username|slice:":1"|upper }}
+                        </div>
+                    {% endif %}
+                </a>
+
+                <div>
+                    <h5 class="mb-1">
+                        <a href="{% url 'member_detail' member_pk=item.member.pk %}" class="text-light text-decoration-none">
+                            {{ item.member.first_name|default:item.member.username }}
+                        </a>
+                        <span class="badge bg-secondary ms-2">{{ item.member.get_role_display }}</span>
+                    </h5>
+                    <p class="mb-0 text-secondary small">{{ item.member.bio|default:"No bio provided yet."|truncatewords:25 }}</p>
+                </div>
+            </div>
+
+            <div class="ms-3 text-end flex-shrink-0">
+                <a href="{% url 'member_detail' member_pk=item.member.pk %}" class="btn btn-sm btn-outline-info me-1">
+                    View Profile
+                </a>
+
+                {% if not item.consent %}
+                    <a href="{% url 'request_consent' recipient_pk=item.member.pk %}" class="btn btn-sm btn-outline-light">
+                        Request DM Consent
+                    </a>
+                {% elif item.consent.status == 'PENDING' %}
+                    {% if item.consent.is_requester %}
+                        <span class="badge bg-warning text-dark">Consent Pending</span>
+                    {% else %}
+                        <a href="{% url 'update_consent' consent_pk=item.consent.id action='accept' %}" class="btn btn-sm btn-success me-1">Accept</a>
+                        <a href="{% url 'update_consent' consent_pk=item.consent.id action='revoke' %}" class="btn btn-sm btn-outline-danger">Decline</a>
+                    {% endif %}
+                {% elif item.consent.status == 'ACCEPTED' %}
+                    <a href="{% url 'conversation' other_member_pk=item.member.pk %}" class="btn btn-sm btn-primary me-1">Open Chat</a>
+                    <a href="{% url 'update_consent' consent_pk=item.consent.id action='revoke' %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Revoke messaging consent?');">Revoke</a>
+                {% elif item.consent.status == 'REVOKED' %}
+                    <span class="badge bg-danger me-2">Revoked</span>
+                    <a href="{% url 'request_consent' recipient_pk=item.member.pk %}" class="btn btn-sm btn-outline-secondary">Re-request</a>
+                {% endif %}
+
+                {% if user.is_staff %}
+                    <form method="post" action="{% url 'admin_delete_member' member_pk=item.member.pk %}" class="d-inline ms-2" onsubmit="return confirm('Permanently delete {{ item.member.username }} and all of their messages, RSVPs, and posts?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Delete Member</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="alert alert-secondary">No other active members found yet.</div>
+    {% endfor %}
+</div>
+{% endblock %}

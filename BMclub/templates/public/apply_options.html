@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Apply for Membership — Blushing Moon{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-4">
+    <div class="col-lg-9">
+        <div class="card bg-body-tertiary border-secondary shadow p-4 mb-4">
+            <h2 class="card-title text-center text-danger fw-bold mb-4">Our Vetting Goal</h2>
+
+            <p>
+                If you've reached this page you are presumably aware that Blushing Moon is a spanking play party (with plenty of social interaction as well). My primary goal in vetting new members without references is to ensure that the party remains a safe environment for all attendees.
+            </p>
+
+            <p class="fw-semibold mb-2">You have two options for vetting:</p>
+
+            <ul class="mb-0">
+                <li class="mb-3">
+                    If you are established in the scene and know either a current member or someone well regarded in the scene (e.g. any of the Cheeky organizers, Miss Chris, Miss Margret, etc.) click on the apply by reference button. You will be asked for some basic identifying information and for a list of references.
+                </li>
+                <li>
+                    If you are new to the scene, or simply don't know any current members, please click on the button for the Vetting Application which matches your orientation (Top, Bottom or Switch). You will also be asked for identifying information followed by questions which are intended to provide insight into your interest in spanking, your understanding of consent before, during and after a scene. Because I’m trying to learn about you, please try to provide honest, complete answers. If I believe that your answers are AI generated, or don’t provide sufficient information for me to make a judgement, I will either reject your request or require a phone interview.
+                </li>
+            </ul>
+        </div>
+
+        <div class="row g-3 justify-content-center text-center">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{% url 'reference_apply' %}" class="btn btn-danger btn-lg w-100 h-100 d-flex align-items-center justify-content-center fw-semibold">
+                    Apply with References
+                </a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{% url 'vetting_apply' role='top' %}" class="btn btn-danger btn-lg w-100 h-100 d-flex align-items-center justify-content-center fw-semibold">
+                    Apply as Top
+                </a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{% url 'vetting_apply' role='bottom' %}" class="btn btn-danger btn-lg w-100 h-100 d-flex align-items-center justify-content-center fw-semibold">
+                    Apply as Bottom
+                </a>
+            </div>
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a href="{% url 'vetting_apply' role='switch' %}" class="btn btn-danger btn-lg w-100 h-100 d-flex align-items-center justify-content-center fw-semibold">
+                    Apply as Switch
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
